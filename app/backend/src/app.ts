@@ -7,7 +7,7 @@ class App {
     this.app = express();
 
     this.config();
-//
+
     // Não remover essa rota
     this.app.get('/', (req, res) => res.json({ ok: true }));
   }
