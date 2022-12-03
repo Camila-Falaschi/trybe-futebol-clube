@@ -7,7 +7,6 @@ export function validateLogin(req: Request, _res: Response, next: NextFunction):
   const login: ILogin = req.body;
   const { error } = loginSchema.validate(login);
 
-  // { "message": "All fields must be filled" }
   if (error) throw new AppErrors(400, error.message);
 
   next();
