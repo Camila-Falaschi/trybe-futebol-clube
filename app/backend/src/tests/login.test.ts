@@ -14,12 +14,14 @@ describe("Test /login endpoint", () => {
   describe("Successful answers", () => {
     beforeEach(async () => {
       sinon.stub(User, "findOne").resolves({
-        id: 1,
-        username: "Admin",
-        role: "admin",
-        email: "email@test.com",
-        password:
-          "$2a$12$L1YqVHk.DvVw722Ooo48wu6RF//RcWVmfqO20TrxOeoHDynS0qksm",
+        dataValues: {
+          id: 1,
+          username: "Admin",
+          role: "admin",
+          email: "email@test.com",
+          password:
+            "$2a$12$L1YqVHk.DvVw722Ooo48wu6RF//RcWVmfqO20TrxOeoHDynS0qksm",
+        }
       } as User);
     });
 

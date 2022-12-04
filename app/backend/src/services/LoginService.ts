@@ -13,7 +13,7 @@ export default class LoginService {
   public async login(email: string, password: string): Promise<string> {
     const user = await this.userModel.findOne({ where: { email } });
 
-    if (!user || !bcrypt.compareSync(password, user.password)) {
+    if (!user || !bcrypt.compareSync(password, user.dataValues.password)) {
       throw new AppErrors(401, 'Incorrect email or password');
     }
 
@@ -27,7 +27,7 @@ export default class LoginService {
   public validate(token: string): string {
     const payload = this.jwt.validateToken(token);
 
-    const { role } = payload.dataValues;
+    const { role } = payload;
 
     return role;
   }

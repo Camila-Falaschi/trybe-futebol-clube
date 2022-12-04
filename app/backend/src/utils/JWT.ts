@@ -36,7 +36,6 @@ export default class JWT implements Ijwt {
       const payload = decode(token);
       return payload as JwtPayload;
     } catch (_e) {
-      // AppErrors(401, 'Expired or invalid token')
       throw new JsonWebTokenError('Expired or invalid token');
     }
   }
