@@ -17,10 +17,18 @@ export default class LoginService {
       throw new AppErrors(401, 'Incorrect email or password');
     }
 
-    const { password: _, ...dataWithoutPassword } = user;
+    const { password: omitted, ...rest } = user.dataValues;
 
-    const token = this.jwt.createToken(dataWithoutPassword);
+    const token = this.jwt.createToken(rest);
 
     return token;
+  }
+
+  public validate(token: string): string {
+    const payload = this.jwt.validateToken(token);
+
+    const { role } = payload.dataValues;
+
+    return role;
   }
 }

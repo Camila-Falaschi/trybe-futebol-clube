@@ -10,4 +10,13 @@ export default class LoginController {
     const token = await this.loginService.login(email, password);
     return res.status(200).json({ token });
   }
+
+  public validate(req: Request, res: Response) {
+    const { authorization } = req.headers;
+
+    if (authorization) {
+      const result = this.loginService.validate(authorization);
+      return res.status(200).json({ role: result });
+    }
+  }
 }
