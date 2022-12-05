@@ -29,7 +29,7 @@ describe("Test /login endpoint", () => {
       (User.findOne as sinon.SinonStub).restore();
     });
 
-    it("POST method should returns status 200", async () => {
+    it("The POST method should return status 200 with a token", async () => {
       const response = await chai.request(app).post("/login").send({
         email: "email@test.com",
         password: "123456",
