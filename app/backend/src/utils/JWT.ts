@@ -1,11 +1,11 @@
 import * as dotenv from 'dotenv';
 import { decode,
-  JsonWebTokenError,
   JwtPayload,
   Secret,
   sign,
   SignOptions,
   verify } from 'jsonwebtoken';
+import AppErrors from './AppErrors';
 
 interface Ijwt {
   createToken(payload: JwtPayload): string;
@@ -36,7 +36,7 @@ export default class JWT implements Ijwt {
       const payload = decode(token);
       return payload as JwtPayload;
     } catch (_e) {
-      throw new JsonWebTokenError('Expired or invalid token');
+      throw new AppErrors(401, 'Token must be a valid token');
     }
   }
 }
