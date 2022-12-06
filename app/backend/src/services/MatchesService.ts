@@ -1,4 +1,5 @@
 import { ModelStatic } from 'sequelize';
+import Team from '../database/models/TeamsModel';
 import Match from '../database/models/MatchesModel';
 
 export default class MatchesService {
@@ -7,7 +8,12 @@ export default class MatchesService {
   ) {}
 
   public async getAllMatches(): Promise<string[]> {
-    const matches = await this.matchesModel.findAll();
+    const matches = await this.matchesModel.findAll({
+      include: [
+        { model: Team, as: 'teamHome', attributes: ['teamName'] },
+        { model: Team, as: 'teamAway', attributes: ['teamName'] },
+      ],
+    });
 
     const matchesList = matches.map((item) => item.dataValues);
 
@@ -17,7 +23,13 @@ export default class MatchesService {
   public async getInProgressMatches(inProgressStatus: string): Promise<string[]> {
     const inProgress = inProgressStatus === 'true';
 
-    const matches = await this.matchesModel.findAll({ where: { inProgress } });
+    const matches = await this.matchesModel.findAll({
+      where: { inProgress },
+      include: [
+        { model: Team, as: 'teamHome', attributes: ['teamName'] },
+        { model: Team, as: 'teamAway', attributes: ['teamName'] },
+      ],
+    });
 
     const matchesList = matches.map((item) => item.dataValues);
 
