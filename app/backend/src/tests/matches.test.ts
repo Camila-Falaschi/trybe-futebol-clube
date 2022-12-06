@@ -5,18 +5,27 @@ import chaiHttp = require("chai-http");
 import Match from "../database/models/MatchesModel";
 
 import App from "../app";
-import { allMatchesModelMock, 
-  allMatchesList, 
+import {
+  allMatchesModelMock,
+  allMatchesList,
   inProgressMatchesModelMock,
   inProgressMatchesList,
   finishedMatchesModelMock,
-  finishedMatchesList } from "./mocks/matches.mock";
+  finishedMatchesList,
+  newMatchBody,
+  newMatchCreated,
+  wrongMatchBody,
+  matchBodyWithNonexistentId,
+} from "./mocks/matches.mock";
+import { validToken } from "./mocks/token.mock";
+import Team from "../database/models/TeamsModel";
 
 chai.use(chaiHttp);
 const { app } = new App();
 const { expect } = chai;
 
 describe("Test /matches endpoint", () => {
+  describe("Successful answers", () => {
     afterEach(() => {
       sinon.restore();
     });
@@ -31,7 +40,9 @@ describe("Test /matches endpoint", () => {
     });
 
     it("The query inProgress=true should be able to filter the matches that are in progress", async () => {
-      sinon.stub(Match, "findAll").resolves(inProgressMatchesModelMock as Match[]);
+      sinon
+        .stub(Match, "findAll")
+        .resolves(inProgressMatchesModelMock as Match[]);
 
       const response = await chai.request(app).get("/matches?inProgress=true");
 
@@ -40,11 +51,60 @@ describe("Test /matches endpoint", () => {
     });
 
     it("The query inProgress=false should be able to filter finished matches", async () => {
-      sinon.stub(Match, "findAll").resolves(finishedMatchesModelMock as Match[]);
+      sinon
+        .stub(Match, "findAll")
+        .resolves(finishedMatchesModelMock as Match[]);
 
       const response = await chai.request(app).get("/matches?inProgress=flase");
 
       expect(response.status).to.equal(200);
       expect(response.body).to.deep.equal(finishedMatchesList);
     });
+
+    it("The POST method should create a new match", async () => {
+      sinon.stub(Match, "create").resolves({ dataValues: newMatchCreated } as Match);
+
+      const response = await chai.request(app).post("/matches")
+        .set("authorization", validToken)
+        .send(newMatchBody);
+
+      expect(response.status).to.equal(201);
+      expect(response.body).to.deep.equal(newMatchCreated);
+    });
+
+    it("The PATCH method, /:id/finish, should update the match to finished", async () => {
+      sinon.stub(Match, "update").resolves();
+
+      const response = await chai.request(app).patch("/matches/:id/finish");
+
+      expect(response.status).to.equal(200);
+      expect(response.body.message).to.deep.equal("Finished");
+    });
   });
+
+  describe("Client errors", () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it("Shouldn't create a new match if both teams' ids are the same", async () => {
+      const response = await chai.request(app).post("/matches")
+        .set("authorization", validToken)
+        .send(wrongMatchBody);
+
+      expect(response.status).to.equal(422);
+      expect(response.body.message).to.deep.equal("It is not possible to create a match with two equal teams");
+    });
+
+    it("Shouldn't create a new match if one of the teams' ids doesn't exist", async () => {
+      sinon.stub(Team, "findAndCountAll").resolves({count: 1});
+
+      const response = await chai.request(app).post("/matches")
+        .set("authorization", validToken)
+        .send(matchBodyWithNonexistentId);
+
+      expect(response.status).to.equal(422);
+      expect(response.body.message).to.deep.equal("It is not possible to create a match with two equal teams");
+    });
+  });
+});

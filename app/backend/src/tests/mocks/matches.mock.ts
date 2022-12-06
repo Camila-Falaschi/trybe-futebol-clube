@@ -78,3 +78,36 @@ export const finishedMatchesModelMock = [
 ];
 
 export const finishedMatchesList = [matchId1, matchId2];
+
+export const matchGoals = {
+  homeTeamGoals: 3,
+  awayTeamGoals: 1,
+}
+
+export const updatedScoreboard =
+`Updated Scoreboard:
+Home Team: ${matchGoals.homeTeamGoals} X Away Team: ${matchGoals.awayTeamGoals}`;
+
+export const newMatchBody = {
+  homeTeam: 16,
+  awayTeam: 8,
+  matchGoals,
+};
+
+export const newMatchCreated = {
+  id: 1,
+  ...newMatchBody,
+  inProgress: true,
+};
+
+export const wrongMatchBody = {
+  homeTeam: 8,
+  awayTeam: 8,
+  matchGoals,
+}
+
+export const matchBodyWithNonexistentId = {
+  homeTeam: 999999999,
+  awayTeam: 8,
+  matchGoals,
+}
