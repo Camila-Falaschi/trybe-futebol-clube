@@ -16,8 +16,11 @@ import {
   newMatchCreated,
   wrongMatchBody,
   matchBodyWithNonexistentId,
+  updatedScoreboard,
+  mockFindAndCountAll,
+  matchGoals,
 } from "./mocks/matches.mock";
-import { validToken } from "./mocks/token.mock";
+import { invalidToken, validToken } from "./mocks/token.mock";
 import Team from "../database/models/TeamsModel";
 
 chai.use(chaiHttp);
@@ -80,6 +83,15 @@ describe("Test /matches endpoint", () => {
       expect(response.status).to.equal(200);
       expect(response.body.message).to.deep.equal("Finished");
     });
+
+    it("The PATCH method, /:id, should update the ongoing match", async () => {
+      sinon.stub(Match, "update").resolves();
+
+      const response = await chai.request(app).patch("/matches/:id").send(matchGoals);;
+
+      expect(response.status).to.equal(200);
+      expect(response.body.message).to.deep.equal(updatedScoreboard);
+    });
   });
 
   describe("Client errors", () => {
@@ -96,15 +108,24 @@ describe("Test /matches endpoint", () => {
       expect(response.body.message).to.deep.equal("It is not possible to create a match with two equal teams");
     });
 
-    it("Shouldn't create a new match if one of the teams' ids doesn't exist", async () => {
-      sinon.stub(Team, "findAndCountAll").resolves({count: 1});
+    // it("Shouldn't create a new match if one of the teams' ids doesn't exist", async () => {
+    //   sinon.stub(Team, "findAndCountAll").resolves(mockFindAndCountAll as Team);
 
+    //   const response = await chai.request(app).post("/matches")
+    //     .set("authorization", validToken)
+    //     .send(matchBodyWithNonexistentId);
+
+    //   expect(response.status).to.equal(404);
+    //   expect(response.body.message).to.deep.equal("There is no team with such id!");
+    // });
+
+    it("Shouldn't create a new match if the token is invalid", async () => {
       const response = await chai.request(app).post("/matches")
-        .set("authorization", validToken)
-        .send(matchBodyWithNonexistentId);
+        .set("authorization", invalidToken)
+        .send(newMatchBody);
 
-      expect(response.status).to.equal(422);
-      expect(response.body.message).to.deep.equal("It is not possible to create a match with two equal teams");
+      expect(response.status).to.equal(401);
+      expect(response.body.message).to.deep.equal("Token must be a valid token");
     });
   });
 });

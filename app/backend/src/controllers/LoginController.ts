@@ -14,9 +14,7 @@ export default class LoginController {
   public validate(req: Request, res: Response) {
     const { authorization } = req.headers;
 
-    if (authorization) {
-      const result = this.loginService.validate(authorization);
-      return res.status(200).json({ role: result });
-    }
+    const result = this.loginService.validate(authorization as string);
+    return res.status(200).json({ role: result });
   }
 }

@@ -8,5 +8,6 @@ export default function errorMiddleware(
   _next: NextFunction,
 ) {
   const { _status, message } = err as AppErrors;
+
   res.status(_status || 500).json({ message });
 }

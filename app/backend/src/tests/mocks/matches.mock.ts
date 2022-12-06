@@ -85,8 +85,7 @@ export const matchGoals = {
 }
 
 export const updatedScoreboard =
-`Updated Scoreboard:
-Home Team: ${matchGoals.homeTeamGoals} X Away Team: ${matchGoals.awayTeamGoals}`;
+`Updated Scoreboard: Home Team: ${matchGoals.homeTeamGoals} X Away Team: ${matchGoals.awayTeamGoals}`;
 
 export const newMatchBody = {
   homeTeam: 16,
@@ -110,4 +109,12 @@ export const matchBodyWithNonexistentId = {
   homeTeam: 999999999,
   awayTeam: 8,
   matchGoals,
+}
+
+export const mockFindAndCountAll = {
+  count: 2,
+  rows: [
+    { dataValues: { id: 10, teamName: 'Minas Brasília' } },
+    { dataValues: { id: 12, teamName: 'Palmeiras' } }
+  ]
 }

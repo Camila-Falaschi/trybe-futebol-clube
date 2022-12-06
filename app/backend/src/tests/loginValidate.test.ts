@@ -3,7 +3,7 @@ import * as chai from "chai";
 import chaiHttp = require("chai-http");
 
 import App from "../app";
-import { validToken } from "./mocks/token.mock";
+import { expiredToken, validToken } from "./mocks/token.mock";
 
 chai.use(chaiHttp);
 const { app } = new App();
@@ -15,5 +15,19 @@ describe("Test /login/validate endpoint", () => {
 
     expect(response.status).to.equal(200);
     expect(response.body.role).to.be.equal("admin");
+  });
+
+  it("Shouldn't work if the token is not informed", async () => {
+    const response = await chai.request(app).get("/login/validate");
+
+  expect(response.status).to.equal(401);
+  expect(response.body.message).to.deep.equal("Token must be a valid token");
+  });
+
+  it("Shouldn't work if the token is expired", async () => {
+    const response = await chai.request(app).get("/login/validate").set('authorization', expiredToken);
+
+  expect(response.status).to.equal(500);
+  expect(response.body.message).to.deep.equal("Expired or invalid token");
   });
 });
