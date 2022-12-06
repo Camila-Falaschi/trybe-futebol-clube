@@ -109,7 +109,7 @@ describe("Test /matches endpoint", () => {
     });
 
     // it("Shouldn't create a new match if one of the teams' ids doesn't exist", async () => {
-    //   sinon.stub(Team, "findAndCountAll").resolves(mockFindAndCountAll as Team);
+    //   sinon.stub(Team, "findAndCountAll").resolves(mockFindAndCountAll as Team[]);
 
     //   const response = await chai.request(app).post("/matches")
     //     .set("authorization", validToken)
