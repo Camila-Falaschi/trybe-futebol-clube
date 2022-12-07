@@ -112,9 +112,8 @@ export const matchBodyWithNonexistentId = {
 }
 
 export const mockFindAndCountAll = {
-  count: 2,
+  count: 1,
   rows: [
     { dataValues: { id: 10, teamName: 'Minas Brasília' } },
-    { dataValues: { id: 12, teamName: 'Palmeiras' } }
   ]
 }

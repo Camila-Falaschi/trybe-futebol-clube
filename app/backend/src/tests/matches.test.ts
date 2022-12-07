@@ -22,6 +22,7 @@ import {
 } from "./mocks/matches.mock";
 import { invalidToken, validToken } from "./mocks/token.mock";
 import Team from "../database/models/TeamsModel";
+import { IFindAndCountAll } from "./mocks/IFindAndCountAll";
 
 chai.use(chaiHttp);
 const { app } = new App();
@@ -109,7 +110,7 @@ describe("Test /matches endpoint", () => {
     });
 
     // it("Shouldn't create a new match if one of the teams' ids doesn't exist", async () => {
-    //   sinon.stub(Team, "findAndCountAll").resolves(mockFindAndCountAll as Team[]);
+    //   sinon.stub(Team, "findAndCountAll").resolves(mockFindAndCountAll as IFindAndCountAll);
 
     //   const response = await chai.request(app).post("/matches")
     //     .set("authorization", validToken)

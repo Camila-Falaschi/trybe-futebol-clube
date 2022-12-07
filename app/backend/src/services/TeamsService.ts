@@ -7,7 +7,7 @@ export default class TeamsService {
     private teamsModel: ModelStatic<Team> = Team,
   ) {}
 
-  public async getAllTeams(): Promise<string[]> {
+  public async getAllTeams(): Promise<ITeam[]> {
     const teams = await this.teamsModel.findAll();
 
     const teamsList = teams.map((item) => item.dataValues);
