@@ -32,9 +32,16 @@ export default class LeaderboardService {
     this._teamMatches = awayTeamMatches;
   }
 
-  private teamData(teamName: string, teamType: string) {
+  private teamAllMatches(id: number) {
+    const allMatches: IMatch[] = this._matchesList
+      .filter((match) => id === match.homeTeam || id === match.awayTeam);
+
+    this._teamMatches = allMatches;
+  }
+
+  private teamData(team: ITeam, teamType: string) {
     const teamMatchesData = new TeamMatchesData();
-    teamMatchesData.generate(teamName, teamType, this._teamMatches);
+    teamMatchesData.generate(team, teamType, this._teamMatches);
 
     const data = {
       name: teamMatchesData._name,
@@ -76,7 +83,8 @@ export default class LeaderboardService {
     const teamsBoard = teamsList.map((team) => {
       if (teamType === 'homeTeam') { this.homeTeam(team.id); }
       if (teamType === 'awayTeam') { this.awayTeam(team.id); }
-      const data = this.teamData(team.teamName, teamType);
+      if (teamType === 'all') { this.teamAllMatches(team.id); }
+      const data = this.teamData(team, teamType);
       return data;
     });
 

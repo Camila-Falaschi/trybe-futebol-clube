@@ -8,5 +8,7 @@ leaderboardRouter.get('/home', (req, res) =>
   leaderboardController.getLeaderboardHomeTeam(req, res));
 leaderboardRouter.get('/away', (req, res) =>
   leaderboardController.getLeaderboardAwayTeam(req, res));
+leaderboardRouter.get('/', (req, res) =>
+  leaderboardController.getLeaderboardAllMatches(req, res));
 
 export default leaderboardRouter;

@@ -1,3 +1,4 @@
+import ITeam from '../../interfaces/ITeam';
 import IMatch from '../../interfaces/IMatch';
 
 export default class TeamMatchesData {
@@ -94,12 +95,21 @@ export default class TeamMatchesData {
     });
   }
 
-  public async generate(teamName: string, teamType: string, matches: IMatch[]) {
+  private handleTeamAllMatches(id: number, matches: IMatch[]) {
+    matches.forEach((match) => {
+      if (match.homeTeam === id) { this.handleHomeTeamGols([match]); }
+      if (match.awayTeam === id) { this.handleAwayTeamGols([match]); }
+    });
+  }
+
+  public async generate(team: ITeam, teamType: string, matches: IMatch[]) {
+    const { teamName, id } = team;
     this._name = teamName;
     this._totalGames = matches.length;
 
     if (teamType === 'homeTeam') { this.handleHomeTeamGols(matches); }
     if (teamType === 'awayTeam') { this.handleAwayTeamGols(matches); }
+    if (teamType === 'all') { this.handleTeamAllMatches(id, matches); }
 
     this.goalsBalance();
     this.efficiency();
