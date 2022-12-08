@@ -32,9 +32,9 @@ export default class LeaderboardService {
     this._teamMatches = awayTeamMatches;
   }
 
-  private teamData(teamName: string) {
+  private teamData(teamName: string, teamType: string) {
     const teamMatchesData = new TeamMatchesData();
-    teamMatchesData.generate(teamName, this._teamMatches);
+    teamMatchesData.generate(teamName, teamType, this._teamMatches);
 
     const data = {
       name: teamMatchesData._name,
@@ -76,7 +76,7 @@ export default class LeaderboardService {
     const teamsBoard = teamsList.map((team) => {
       if (teamType === 'homeTeam') { this.homeTeam(team.id); }
       if (teamType === 'awayTeam') { this.awayTeam(team.id); }
-      const data = this.teamData(team.teamName);
+      const data = this.teamData(team.teamName, teamType);
       return data;
     });
 

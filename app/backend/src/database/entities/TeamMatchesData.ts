@@ -39,9 +39,15 @@ export default class TeamMatchesData {
     this._totalDraws += 1;
   }
 
-  private gols(homeTeamGoals: number, awayTeamGoals: number) {
-    this._goalsFavor += homeTeamGoals;
-    this._goalsOwn += awayTeamGoals;
+  private gols(teamType: string, homeTeamGoals: number, awayTeamGoals: number) {
+    if (teamType === 'homeTeam') {
+      this._goalsFavor += homeTeamGoals;
+      this._goalsOwn += awayTeamGoals;
+    }
+    if (teamType === 'awayTeam') {
+      this._goalsFavor += awayTeamGoals;
+      this._goalsOwn += homeTeamGoals;
+    }
   }
 
   private goalsBalance() {
@@ -52,29 +58,48 @@ export default class TeamMatchesData {
     this._efficiency = Number(((this._totalPoints / (this._totalGames * 3)) * 100).toFixed(2));
   }
 
-  private handleGols(matches: IMatch[]) {
+  private handleHomeTeamGols(matches: IMatch[]) {
     matches.forEach((match) => {
       const { homeTeamGoals, awayTeamGoals } = match;
       if (homeTeamGoals > awayTeamGoals) {
         this.win();
-        this.gols(homeTeamGoals, awayTeamGoals);
+        this.gols('homeTeam', homeTeamGoals, awayTeamGoals);
       }
       if (homeTeamGoals === awayTeamGoals) {
         this.draw();
-        this.gols(homeTeamGoals, awayTeamGoals);
+        this.gols('homeTeam', homeTeamGoals, awayTeamGoals);
       }
       if (homeTeamGoals < awayTeamGoals) {
         this.loss();
-        this.gols(homeTeamGoals, awayTeamGoals);
+        this.gols('homeTeam', homeTeamGoals, awayTeamGoals);
       }
     });
   }
 
-  public async generate(teamName: string, matches: IMatch[]) {
+  private handleAwayTeamGols(matches: IMatch[]) {
+    matches.forEach((match) => {
+      const { homeTeamGoals, awayTeamGoals } = match;
+      if (homeTeamGoals < awayTeamGoals) {
+        this.win();
+        this.gols('awayTeam', homeTeamGoals, awayTeamGoals);
+      }
+      if (homeTeamGoals === awayTeamGoals) {
+        this.draw();
+        this.gols('awayTeam', homeTeamGoals, awayTeamGoals);
+      }
+      if (homeTeamGoals > awayTeamGoals) {
+        this.loss();
+        this.gols('awayTeam', homeTeamGoals, awayTeamGoals);
+      }
+    });
+  }
+
+  public async generate(teamName: string, teamType: string, matches: IMatch[]) {
     this._name = teamName;
     this._totalGames = matches.length;
 
-    this.handleGols(matches);
+    if (teamType === 'homeTeam') { this.handleHomeTeamGols(matches); }
+    if (teamType === 'awayTeam') { this.handleAwayTeamGols(matches); }
 
     this.goalsBalance();
     this.efficiency();
