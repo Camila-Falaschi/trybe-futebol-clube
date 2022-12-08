@@ -53,16 +53,14 @@ export default class LeaderboardService {
   }
 
   private orderBoardList() {
-    const sortByVictories = [...this._teamsBoard].sort((a, b) =>
-      a.totalVictories - b.totalVictories);
-    const sortByBalance = [...sortByVictories].sort((a, b) =>
-      a.goalsBalance - b.goalsBalance);
-    const sortByFavor = [...sortByBalance].sort((a, b) =>
-      a.goalsFavor - b.goalsFavor);
-    const sortByOwn = [...sortByFavor].sort((a, b) =>
-      a.goalsOwn - b.goalsOwn);
+    const sort = [...this._teamsBoard]
+      .sort((a, b) => b.goalsOwn - a.goalsOwn)
+      .sort((a, b) => b.goalsFavor - a.goalsFavor)
+      .sort((a, b) => b.goalsBalance - a.goalsBalance)
+      .sort((a, b) => b.totalVictories - a.totalVictories)
+      .sort((a, b) => b.totalPoints - a.totalPoints);
 
-    return sortByOwn;
+    return sort;
   }
 
   public async getLeaderboard(teamType: string): Promise<ILeaderboard[]> {
@@ -76,7 +74,8 @@ export default class LeaderboardService {
     const teamsList: ITeam[] = teams.map((item) => item.dataValues);
 
     const teamsBoard = teamsList.map((team) => {
-      if (teamType === 'homeTeam') { this.homeTeam(team.id); } else { this.awayTeam(team.id); }
+      if (teamType === 'homeTeam') { this.homeTeam(team.id); }
+      if (teamType === 'awayTeam') { this.awayTeam(team.id); }
       const data = this.teamData(team.teamName);
       return data;
     });
